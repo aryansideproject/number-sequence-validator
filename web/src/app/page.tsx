@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import ValidatorInput from "@/components/validator-input";
 import TableAGrid from "@/components/table-a-grid";
 import { TABLE_A_FLAT } from "@/lib/table-data";
+import { validate } from "@/lib/validator";
 import type { ValidationResult } from "@/lib/types";
 
 export default function Home() {
@@ -33,28 +34,16 @@ export default function Home() {
     setResult(null);
   }
 
-  async function handleValidate(sequence: string) {
+  function handleValidate(sequence: string) {
     setLoading(true);
     setError("");
     setResult(null);
 
     try {
-      const res = await fetch("/api/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sequence, tableA }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || "Validation failed.");
-        return;
-      }
-
-      const data: ValidationResult = await res.json();
+      const data = validate(sequence, tableA);
       setResult(data);
     } catch {
-      setError("Failed to connect to the server.");
+      setError("Validation failed.");
     } finally {
       setLoading(false);
     }
