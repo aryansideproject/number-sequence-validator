@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import ValidatorInput from "@/components/validator-input";
 import TableAGrid from "@/components/table-a-grid";
+import InstallButton from "@/components/install-button";
 import { TABLES } from "@/lib/table-data";
 import { validate } from "@/lib/validator";
 import type { ValidationResult } from "@/lib/types";
@@ -94,12 +95,19 @@ export default function Home() {
   return (
     <main className="flex-1 w-full max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-12">
       <div className="mb-4 sm:mb-8">
-        <h1 className="text-2xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mb-1 sm:mb-2">
-          ज्योतिष ग्रह अंक
-        </h1>
-        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-          अंक अनुक्रम दर्ज करें और ग्रिड में चक्रीय तालिका से सभी मान्य मिलान खोजें।
-        </p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mb-1 sm:mb-2">
+              ज्योतिष ग्रह अंक
+            </h1>
+            <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+              अंक अनुक्रम दर्ज करें और ग्रिड में चक्रीय तालिका से सभी मान्य मिलान खोजें।
+            </p>
+          </div>
+          <div className="shrink-0 w-36 sm:w-44">
+            <InstallButton />
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
