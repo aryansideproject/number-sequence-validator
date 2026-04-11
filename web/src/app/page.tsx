@@ -92,23 +92,23 @@ export default function Home() {
   }
 
   return (
-    <main className="flex-1 w-full max-w-4xl mx-auto px-4 py-8 sm:py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+    <main className="flex-1 w-full max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-12">
+      <div className="mb-4 sm:mb-8">
+        <h1 className="text-2xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mb-1 sm:mb-2">
           ज्योतिष ग्रह अंक
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
+        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
           अंक अनुक्रम दर्ज करें और ग्रिड में चक्रीय तालिका से सभी मान्य मिलान खोजें।
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-neutral-200 dark:border-neutral-700 mb-6">
+      <div className="flex border-b border-neutral-200 dark:border-neutral-700 mb-4 sm:mb-6">
         {TABLES.map((table, idx) => (
           <button
             key={table.id}
             onClick={() => handleTabChange(idx)}
-            className={`px-5 py-2.5 text-sm font-medium transition-colors relative ${
+            className={`flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium transition-colors relative ${
               activeTab === idx
                 ? "text-blue-600 dark:text-blue-400"
                 : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300"
@@ -122,12 +122,12 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <TableAGrid digits={currentDigits} matches={currentResult?.matches} />
 
         {/* Add digit */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <span className="text-xs sm:text-sm font-medium text-neutral-700 dark:text-neutral-300">
             Add digit:
           </span>
           <div className="flex gap-2">
@@ -145,12 +145,12 @@ export default function Home() {
                 if (e.key === "Enter") handleAddDigit();
               }}
               placeholder="0-9"
-              className="w-14 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-center text-lg font-mono text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
+              className="w-12 sm:w-14 rounded-lg border border-neutral-300 bg-white px-2 sm:px-3 py-2 text-center text-base sm:text-lg font-mono text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
             />
             <button
               onClick={handleAddDigit}
               disabled={!/^\d$/.test(digitInput)}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="rounded-lg bg-emerald-600 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Add
             </button>
@@ -159,13 +159,13 @@ export default function Home() {
           {currentAdded > 0 && (
             <>
               <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                {currentAdded} {currentAdded === 1 ? "digit" : "digits"} added
+                {currentAdded} added
               </span>
               <button
                 onClick={handleReset}
-                className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs text-neutral-600 hover:bg-neutral-100 transition-colors dark:border-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700"
+                className="rounded-lg border border-neutral-300 px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs text-neutral-600 hover:bg-neutral-100 transition-colors dark:border-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700"
               >
-                Reset to original
+                Reset
               </button>
             </>
           )}
