@@ -3,45 +3,87 @@
 import { useState, useRef } from "react";
 import ValidatorInput from "@/components/validator-input";
 import TableAGrid from "@/components/table-a-grid";
-import { TABLE_A_FLAT } from "@/lib/table-data";
+import { TABLES } from "@/lib/table-data";
 import { validate } from "@/lib/validator";
 import type { ValidationResult } from "@/lib/types";
 
 export default function Home() {
-  const [tableA, setTableA] = useState(TABLE_A_FLAT);
-  const [result, setResult] = useState<ValidationResult | null>(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [tableDigits, setTableDigits] = useState(() =>
+    TABLES.map((t) => t.flat)
+  );
+  const [results, setResults] = useState<(ValidationResult | null)[]>(
+    () => TABLES.map(() => null)
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [digitInput, setDigitInput] = useState("");
-  const [addedCount, setAddedCount] = useState(0);
+  const [addedCounts, setAddedCounts] = useState(() =>
+    TABLES.map(() => 0)
+  );
   const digitInputRef = useRef<HTMLInputElement>(null);
+
+  const currentDigits = tableDigits[activeTab];
+  const currentResult = results[activeTab];
+  const currentAdded = addedCounts[activeTab];
+
+  function handleTabChange(idx: number) {
+    setActiveTab(idx);
+    setError("");
+  }
 
   function handleAddDigit() {
     const d = digitInput.trim();
     if (d.length !== 1 || !/^\d$/.test(d)) return;
 
-    // Remove first digit, append new digit at the end
-    setTableA((prev) => prev.slice(1) + d);
-    setAddedCount((c) => c + 1);
+    setTableDigits((prev) => {
+      const next = [...prev];
+      next[activeTab] = next[activeTab].slice(1) + d;
+      return next;
+    });
+    setAddedCounts((prev) => {
+      const next = [...prev];
+      next[activeTab] = next[activeTab] + 1;
+      return next;
+    });
+    setResults((prev) => {
+      const next = [...prev];
+      next[activeTab] = null;
+      return next;
+    });
     setDigitInput("");
-    setResult(null);
     digitInputRef.current?.focus();
   }
 
   function handleReset() {
-    setTableA(TABLE_A_FLAT);
-    setAddedCount(0);
-    setResult(null);
+    setTableDigits((prev) => {
+      const next = [...prev];
+      next[activeTab] = TABLES[activeTab].flat;
+      return next;
+    });
+    setAddedCounts((prev) => {
+      const next = [...prev];
+      next[activeTab] = 0;
+      return next;
+    });
+    setResults((prev) => {
+      const next = [...prev];
+      next[activeTab] = null;
+      return next;
+    });
   }
 
   function handleValidate(sequence: string) {
     setLoading(true);
     setError("");
-    setResult(null);
 
     try {
-      const data = validate(sequence, tableA);
-      setResult(data);
+      const data = validate(sequence, currentDigits);
+      setResults((prev) => {
+        const next = [...prev];
+        next[activeTab] = data;
+        return next;
+      });
     } catch {
       setError("Validation failed.");
     } finally {
@@ -56,17 +98,37 @@ export default function Home() {
           ज्योतिष ग्रह अंक
         </h1>
         <p className="text-neutral-600 dark:text-neutral-400">
-          अंक अनुक्रम दर्ज करें और 1,005 अंकों की ग्रिड में चक्रीय तालिका से सभी मान्य मिलान खोजें।
+          अंक अनुक्रम दर्ज करें और ग्रिड में चक्रीय तालिका से सभी मान्य मिलान खोजें।
         </p>
       </div>
 
-      <div className="space-y-6">
-        <TableAGrid digits={tableA} matches={result?.matches} />
+      {/* Tabs */}
+      <div className="flex border-b border-neutral-200 dark:border-neutral-700 mb-6">
+        {TABLES.map((table, idx) => (
+          <button
+            key={table.id}
+            onClick={() => handleTabChange(idx)}
+            className={`px-5 py-2.5 text-sm font-medium transition-colors relative ${
+              activeTab === idx
+                ? "text-blue-600 dark:text-blue-400"
+                : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300"
+            }`}
+          >
+            {table.label}
+            {activeTab === idx && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
+            )}
+          </button>
+        ))}
+      </div>
 
-        {/* Add digit to Table A */}
+      <div className="space-y-6">
+        <TableAGrid digits={currentDigits} matches={currentResult?.matches} />
+
+        {/* Add digit */}
         <div className="flex items-center gap-3 flex-wrap">
           <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            Add digit to Table A:
+            Add digit:
           </span>
           <div className="flex gap-2">
             <input
@@ -94,10 +156,10 @@ export default function Home() {
             </button>
           </div>
 
-          {addedCount > 0 && (
+          {currentAdded > 0 && (
             <>
               <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                {addedCount} {addedCount === 1 ? "digit" : "digits"} added
+                {currentAdded} {currentAdded === 1 ? "digit" : "digits"} added
               </span>
               <button
                 onClick={handleReset}

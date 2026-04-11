@@ -1,10 +1,10 @@
-import { TABLE_A_FLAT, COLS_PER_ROW, buildTableB } from "./table-data";
+import { COLS_PER_ROW, buildTableB } from "./table-data";
 import type { Match, DigitProof, ValidationResult } from "./types";
 
 const tableB = buildTableB();
 
-export function validate(sequence: string, tableADigits?: string): ValidationResult {
-  const tableA = tableADigits || TABLE_A_FLAT;
+export function validate(sequence: string, tableADigits: string): ValidationResult {
+  const tableA = tableADigits;
   const k = sequence.length;
   const n = tableA.length;
   const inputDigits = Array.from(sequence, Number);
