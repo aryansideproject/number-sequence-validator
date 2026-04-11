@@ -15,6 +15,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ज्योतिष ग्रह अंक",
   description: "अंक अनुक्रम को 1,005 अंकों की ग्रिड के विरुद्ध चक्रीय तालिका लुकअप से मान्य करें।",
+  manifest: "/manifest.json",
+  themeColor: "#2563eb",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "ज्योतिष ग्रह अंक",
+  },
 };
 
 export default function RootLayout({
@@ -24,10 +31,20 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="hi"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+      </head>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if("serviceWorker"in navigator){navigator.serviceWorker.register("/sw.js")}`,
+          }}
+        />
+      </body>
     </html>
   );
 }
