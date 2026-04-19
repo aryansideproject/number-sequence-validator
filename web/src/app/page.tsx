@@ -179,7 +179,18 @@ export default function Home() {
           )}
         </div>
 
-        <ValidatorInput onValidate={handleValidate} loading={loading} />
+        <ValidatorInput
+          onValidate={handleValidate}
+          onClear={() => {
+            setResults((prev) => {
+              const next = [...prev];
+              next[activeTab] = null;
+              return next;
+            });
+            setError("");
+          }}
+          loading={loading}
+        />
 
         {error && (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">

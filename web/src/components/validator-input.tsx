@@ -6,10 +6,11 @@ const EXAMPLES = ["1395672", "105079", "999", "12345", "0000"];
 
 interface Props {
   onValidate: (sequence: string) => void;
+  onClear: () => void;
   loading: boolean;
 }
 
-export default function ValidatorInput({ onValidate, loading }: Props) {
+export default function ValidatorInput({ onValidate, onClear, loading }: Props) {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
@@ -37,18 +38,35 @@ export default function ValidatorInput({ onValidate, loading }: Props) {
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-        <input
-          type="text"
-          inputMode="numeric"
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            setError("");
-          }}
-          placeholder="Enter digit sequence"
-          className="flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2.5 sm:px-4 sm:py-3 text-base sm:text-lg font-mono text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500"
-          autoFocus
-        />
+        <div className="relative flex-1">
+          <input
+            type="text"
+            inputMode="numeric"
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              setError("");
+            }}
+            placeholder="Enter digit sequence"
+            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2.5 pr-9 sm:px-4 sm:py-3 sm:pr-10 text-base sm:text-lg font-mono text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500"
+            autoFocus
+          />
+          {input && (
+            <button
+              type="button"
+              onClick={() => {
+                setInput("");
+                setError("");
+                onClear();
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:hover:text-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
         <button
           type="submit"
           disabled={loading}
