@@ -111,12 +111,12 @@ export default function Home() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-neutral-200 dark:border-neutral-700 mb-4 sm:mb-6">
+      <div className="flex overflow-x-auto border-b border-neutral-200 dark:border-neutral-700 mb-4 sm:mb-6 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-none">
         {TABLES.map((table, idx) => (
           <button
             key={table.id}
             onClick={() => handleTabChange(idx)}
-            className={`flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium transition-colors relative ${
+            className={`shrink-0 px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium transition-colors relative ${
               activeTab === idx
                 ? "text-blue-600 dark:text-blue-400"
                 : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300"

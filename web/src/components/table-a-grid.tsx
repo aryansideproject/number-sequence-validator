@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import type { Match } from "@/lib/types";
 
 const MATCH_COLOURS = [
@@ -14,10 +14,9 @@ const MATCH_COLOURS = [
   { bg: "bg-indigo-500", text: "text-white" },
 ];
 
-// Cell size in px — smaller on mobile
-const CELL_DESKTOP = 20;
-const CELL_MOBILE = 14;
-const GAP = 0;
+const CELL_SIZES = [12, 16, 20, 26];
+const DEFAULT_MOBILE = 1; // index 1 = 16px
+const DEFAULT_DESKTOP = 2; // index 2 = 20px
 
 interface Props {
   digits: string;
@@ -26,24 +25,28 @@ interface Props {
 
 export default function TableAGrid({ digits, matches }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [sizeIdx, setSizeIdx] = useState(DEFAULT_DESKTOP);
   const [cols, setCols] = useState(33);
-  const [cellSize, setCellSize] = useState(CELL_DESKTOP);
+
+  const cellSize = CELL_SIZES[sizeIdx];
+
+  const recalcCols = useCallback(() => {
+    if (!containerRef.current) return;
+    const w = containerRef.current.clientWidth - 24;
+    const columns = Math.max(10, Math.floor(w / cellSize));
+    setCols(columns);
+  }, [cellSize]);
 
   useEffect(() => {
-    function calc() {
-      if (!containerRef.current) return;
-      // Available width inside the container (minus padding)
-      const w = containerRef.current.clientWidth - 24; // 12px padding each side
-      const isMobile = window.innerWidth < 640;
-      const size = isMobile ? CELL_MOBILE : CELL_DESKTOP;
-      const columns = Math.max(10, Math.floor(w / (size + GAP)));
-      setCols(columns);
-      setCellSize(size);
-    }
-    calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
+    const isMobile = window.innerWidth < 640;
+    if (isMobile) setSizeIdx(DEFAULT_MOBILE);
   }, []);
+
+  useEffect(() => {
+    recalcCols();
+    window.addEventListener("resize", recalcCols);
+    return () => window.removeEventListener("resize", recalcCols);
+  }, [recalcCols]);
 
   const digitArray = Array.from(digits);
 
@@ -74,13 +77,33 @@ export default function TableAGrid({ digits, matches }: Props) {
   }
 
   const hasHighlights = visibleMatches.length > 0;
+  const fontSize = cellSize <= 12 ? 8 : cellSize <= 16 ? 11 : cellSize <= 20 ? 13 : 16;
 
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-3">
-        <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-          Table A
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+            Table A
+          </h2>
+          {/* Zoom controls */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setSizeIdx((i) => Math.max(0, i - 1))}
+              disabled={sizeIdx === 0}
+              className="w-7 h-7 flex items-center justify-center rounded border border-neutral-300 text-sm text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors dark:border-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700"
+            >
+              -
+            </button>
+            <button
+              onClick={() => setSizeIdx((i) => Math.min(CELL_SIZES.length - 1, i + 1))}
+              disabled={sizeIdx === CELL_SIZES.length - 1}
+              className="w-7 h-7 flex items-center justify-center rounded border border-neutral-300 text-sm text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors dark:border-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700"
+            >
+              +
+            </button>
+          </div>
+        </div>
         <span className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
           {digits.length.toLocaleString()} digits
           {hasHighlights && (
@@ -98,7 +121,7 @@ export default function TableAGrid({ digits, matches }: Props) {
 
       <div
         ref={containerRef}
-        className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-3 bg-neutral-50 dark:bg-neutral-800/50"
+        className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-3 bg-neutral-50 dark:bg-neutral-800/50 overflow-x-auto"
       >
         <div
           className="grid gap-0 w-fit mx-auto"
@@ -117,7 +140,7 @@ export default function TableAGrid({ digits, matches }: Props) {
             return (
               <div
                 key={pos}
-                style={{ width: cellSize, height: cellSize, fontSize: cellSize < 16 ? 9 : 12 }}
+                style={{ width: cellSize, height: cellSize, fontSize }}
                 className={`flex items-center justify-center font-mono tabular-nums select-none transition-colors ${
                   isHighlighted
                     ? `${colour!.bg} ${colour!.text} font-bold ${
