@@ -190,6 +190,7 @@ export default function Home() {
             setError("");
           }}
           loading={loading}
+          hasResults={currentResult !== null}
         />
 
         {error && (

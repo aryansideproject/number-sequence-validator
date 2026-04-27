@@ -8,9 +8,10 @@ interface Props {
   onValidate: (sequence: string) => void;
   onClear: () => void;
   loading: boolean;
+  hasResults: boolean;
 }
 
-export default function ValidatorInput({ onValidate, onClear, loading }: Props) {
+export default function ValidatorInput({ onValidate, onClear, loading, hasResults }: Props) {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
@@ -79,6 +80,19 @@ export default function ValidatorInput({ onValidate, onClear, loading }: Props) 
         >
           {loading ? "Validating..." : "Validate"}
         </button>
+        {hasResults && (
+          <button
+            type="button"
+            onClick={() => {
+              setInput("");
+              setError("");
+              onClear();
+            }}
+            className="rounded-lg border border-red-300 px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-red-600 hover:bg-red-50 transition-colors dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
+          >
+            Clear
+          </button>
+        )}
       </form>
 
       {error && (
