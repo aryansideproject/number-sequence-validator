@@ -53,24 +53,24 @@ export default function ValidatorInput({ onValidate, onClear, loading, hasResult
             autoFocus
           />
           {input && (
-            <>
-              <span className="absolute right-9 sm:right-10 top-1/2 -translate-y-1/2 text-xs font-mono text-neutral-400 dark:text-neutral-500 pointer-events-none">
-                {input.replace(/\D/g, "").length}
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setInput("");
-                  setError("");
-                  onClear();
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:hover:text-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </>
+            <span className="absolute right-9 sm:right-10 top-1/2 -translate-y-1/2 text-xs font-mono text-neutral-400 dark:text-neutral-500 pointer-events-none">
+              {input.replace(/\D/g, "").length}
+            </span>
+          )}
+          {(input || hasResults) && (
+            <button
+              type="button"
+              onClick={() => {
+                setInput("");
+                setError("");
+                onClear();
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:hover:text-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           )}
         </div>
         <button
@@ -80,19 +80,6 @@ export default function ValidatorInput({ onValidate, onClear, loading, hasResult
         >
           {loading ? "Validating..." : "Validate"}
         </button>
-        {hasResults && (
-          <button
-            type="button"
-            onClick={() => {
-              setInput("");
-              setError("");
-              onClear();
-            }}
-            className="rounded-lg border border-red-300 px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-red-600 hover:bg-red-50 transition-colors dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
-          >
-            Clear
-          </button>
-        )}
       </form>
 
       {error && (
