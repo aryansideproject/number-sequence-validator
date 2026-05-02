@@ -22,6 +22,9 @@ export default function Home() {
   const [addedCounts, setAddedCounts] = useState(() =>
     TABLES.map(() => 0)
   );
+  const [savedBase, setSavedBase] = useState(() =>
+    TABLES.map((t) => t.flat)
+  );
   const digitInputRef = useRef<HTMLInputElement>(null);
 
   const currentDigits = tableDigits[activeTab];
@@ -59,7 +62,7 @@ export default function Home() {
   function handleReset() {
     setTableDigits((prev) => {
       const next = [...prev];
-      next[activeTab] = TABLES[activeTab].flat;
+      next[activeTab] = savedBase[activeTab];
       return next;
     });
     setAddedCounts((prev) => {
@@ -70,6 +73,19 @@ export default function Home() {
     setResults((prev) => {
       const next = [...prev];
       next[activeTab] = null;
+      return next;
+    });
+  }
+
+  function handleSave() {
+    setSavedBase((prev) => {
+      const next = [...prev];
+      next[activeTab] = tableDigits[activeTab];
+      return next;
+    });
+    setAddedCounts((prev) => {
+      const next = [...prev];
+      next[activeTab] = 0;
       return next;
     });
   }
@@ -169,6 +185,12 @@ export default function Home() {
               <span className="text-xs text-neutral-500 dark:text-neutral-400">
                 {currentAdded} added
               </span>
+              <button
+                onClick={handleSave}
+                className="rounded-lg bg-blue-600 px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition-colors"
+              >
+                Save
+              </button>
               <button
                 onClick={handleReset}
                 className="rounded-lg border border-neutral-300 px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs text-neutral-600 hover:bg-neutral-100 transition-colors dark:border-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700"
