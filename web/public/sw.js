@@ -1,10 +1,6 @@
-const CACHE_NAME = "grah-ank-v1";
-const ASSETS = ["/", "/icon-192.png", "/icon-512.png"];
+const CACHE_NAME = "grah-ank-v2";
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
@@ -18,16 +14,16 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
+  // Network-first: always try fresh content, cache as fallback for offline
   e.respondWith(
-    caches.match(e.request).then((cached) => {
-      const fetched = fetch(e.request).then((response) => {
-        if (response && response.status === 200) {
+    fetch(e.request)
+      .then((response) => {
+        if (response && response.status === 200 && response.type === "basic") {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
         }
         return response;
-      }).catch(() => cached);
-      return cached || fetched;
-    })
+      })
+      .catch(() => caches.match(e.request))
   );
 });

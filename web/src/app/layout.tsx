@@ -41,7 +41,7 @@ export default function RootLayout({
         {children}
         <script
           dangerouslySetInnerHTML={{
-            __html: `if("serviceWorker"in navigator){navigator.serviceWorker.register("/sw.js")}`,
+            __html: `if("serviceWorker"in navigator){navigator.serviceWorker.register("/sw.js").then(function(r){setInterval(function(){r.update()},60000)})}`,
           }}
         />
       </body>
