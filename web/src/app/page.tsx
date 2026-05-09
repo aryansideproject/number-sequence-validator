@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import ValidatorInput from "@/components/validator-input";
 import TableAGrid from "@/components/table-a-grid";
 import InstallButton from "@/components/install-button";
@@ -10,9 +10,18 @@ import type { ValidationResult } from "@/lib/types";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
-  const [tableDigits, setTableDigits] = useState(() =>
-    TABLES.map((t) => t.flat)
-  );
+  const [tableDigits, setTableDigits] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("grahank-saved");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as string[];
+          if (parsed.length === TABLES.length) return parsed;
+        } catch { /* ignore */ }
+      }
+    }
+    return TABLES.map((t) => t.flat);
+  });
   const [results, setResults] = useState<(ValidationResult | null)[]>(
     () => TABLES.map(() => null)
   );
@@ -22,9 +31,18 @@ export default function Home() {
   const [addedCounts, setAddedCounts] = useState(() =>
     TABLES.map(() => 0)
   );
-  const [savedBase, setSavedBase] = useState(() =>
-    TABLES.map((t) => t.flat)
-  );
+  const [savedBase, setSavedBase] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("grahank-saved");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as string[];
+          if (parsed.length === TABLES.length) return parsed;
+        } catch { /* ignore */ }
+      }
+    }
+    return TABLES.map((t) => t.flat);
+  });
   const digitInputRef = useRef<HTMLInputElement>(null);
 
   const currentDigits = tableDigits[activeTab];
@@ -78,9 +96,13 @@ export default function Home() {
   }
 
   function handleSave() {
-    setSavedBase((prev) => {
+    const newBase = [...savedBase];
+    newBase[activeTab] = tableDigits[activeTab];
+    setSavedBase(newBase);
+    localStorage.setItem("grahank-saved", JSON.stringify(newBase));
+    setTableDigits((prev) => {
       const next = [...prev];
-      next[activeTab] = tableDigits[activeTab];
+      next[activeTab] = newBase[activeTab];
       return next;
     });
     setAddedCounts((prev) => {

@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-const EXAMPLES = ["1395672", "105079", "999", "12345", "0000"];
-
 interface Props {
   onValidate: (sequence: string) => void;
   onClear: () => void;
@@ -26,12 +24,6 @@ export default function ValidatorInput({ onValidate, onClear, loading, hasResult
       setError("Input must contain digits only (0-9).");
       return;
     }
-    setError("");
-    onValidate(seq);
-  }
-
-  function handleQuickFill(seq: string) {
-    setInput(seq);
     setError("");
     onValidate(seq);
   }
@@ -85,21 +77,6 @@ export default function ValidatorInput({ onValidate, onClear, loading, hasResult
       {error && (
         <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        <span className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 self-center">
-          Try:
-        </span>
-        {EXAMPLES.map((seq) => (
-          <button
-            key={seq}
-            onClick={() => handleQuickFill(seq)}
-            className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs sm:text-sm font-mono text-neutral-700 hover:bg-neutral-100 hover:border-neutral-400 transition-colors dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-700"
-          >
-            {seq}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
